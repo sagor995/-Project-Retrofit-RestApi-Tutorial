@@ -105,12 +105,12 @@ $app->post('/userlogin', function(Request $request, Response $response){
         }else if($result == PASSWORD_DO_NOT_MATCH){
             $response_data = array();
             $response_data['error'] = true;
-            $response_data['message'] = 'Invalud credential';
+            $response_data['message'] = 'Invalid credential';
 
             $response->getBody()->write(json_encode($response_data));
             return $response
                     ->withHeader('Content-type', 'application/json')
-                    ->withStatus(404);
+                    ->withStatus(200);
         }
     }
     return $response
@@ -121,19 +121,28 @@ $app->post('/userlogin', function(Request $request, Response $response){
 $app->get('/allusers', function(Request $request, Response $response){
     $db = new DBOperations;
 
-    $users = $db->getAllUsers();
+    if($users = $db->getAllUsers()){
+        $response_data = array();
 
-    $response_data = array();
+        $response_data['error'] = false;
+        $response_data['users'] = $users;
+        $response_data['message'] = "Fetching Successful";
+    
+        $response->getBody()->write(json_encode($response_data));
 
-    $response_data['error'] = false;
-    $response_data['users'] = $users;
- 
-    $response->getBody()->write(json_encode($response_data));
-
-    return $response
-                    ->withHeader('Content-type', 'application/json')
-                    ->withStatus(422);
-        
+        return $response
+                        ->withHeader('Content-type', 'application/json')
+                        ->withStatus(201);
+    }else{
+        $response_data = array();
+        $response_data['error'] = true;
+        $response_data['users'] = $users;
+        $response_data['message'] = "Some error occured";
+        $response->getBody()->write(json_encode($response_data));
+        return $response
+                        ->withHeader('Content-type', 'application/json')
+                        ->withStatus(422);
+    }
 });
 
 $app->put('/updateuser/{id}', function(Request $request, Response $response, array $args){
