@@ -11,6 +11,14 @@ $app = AppFactory::create();
 $app->setBasePath("/MyApi/public");
 $app->addErrorMiddleware(true, true, true);
 $app->addBodyParsingMiddleware();
+
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
+    "secure"=>false,
+    "users" => [
+        "sam123" => "123456"
+    ]
+]));
+
 /*
     endpoint: createuser
     parameters: email, password, name, school
