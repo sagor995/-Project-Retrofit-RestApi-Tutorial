@@ -148,7 +148,7 @@ $app->get('/allusers', function(Request $request, Response $response){
 $app->put('/updateuser/{id}', function(Request $request, Response $response, array $args){
 
     $id = $args['id'];
-    if(!haveEmptyParameters(array('email','name','school','id'), $request, $response)){
+    if(!haveEmptyParameters(array('email','name','school'), $request, $response)){
         
         $request_data = $request->getParsedBody();
         $email = $request_data['email'];
